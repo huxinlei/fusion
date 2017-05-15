@@ -1,2 +1,5 @@
-# fusion
-fusion framework
+# FUSION
+**Java游戏服务器框架**
+*   Netty
+*   Protobuf
+
