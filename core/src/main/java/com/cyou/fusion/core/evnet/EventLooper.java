@@ -1,3 +1,6 @@
+/*
+ * Copyright 2017 The Changyou Fusion Framework
+ */
 package com.cyou.fusion.core.evnet;
 
 /**
@@ -60,16 +63,11 @@ public class EventLooper {
         }
         final EventQueue queue = me.mQueue;
 
-        // 每次最多执行10个Event
-        while (true) {
-            Event event = queue.pop();
-            if (event != null) {
-                // 执行Event 或 执行回调
-                event.target.dispatchMessage(event);
-
-            } else {
-                break;
-            }
+        // 遍历所有Event
+        Event event;
+        while ((event = queue.pop()) != null) {
+            // 执行Event 或 执行回调
+            event.target.dispatchMessage(event);
         }
     }
 

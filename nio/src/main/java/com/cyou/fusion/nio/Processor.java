@@ -8,12 +8,32 @@ package com.cyou.fusion.nio;
  * <p>
  * Created by zhanglei_js on 2017/2/6.
  */
-@FunctionalInterface
 public interface Processor {
+
+    /**
+     * 自定义的tick运行前逻辑
+     */
+    void prepare();
+
+    /**
+     * 自定义的tick结束前逻辑
+     */
+    void terminate();
 
     /**
      * 自定义的tick逻辑
      */
-    void process();
+    void tick();
+
+    /**
+     * 每个session的tick逻辑
+     */
+    void tick(Session session);
+
+    /**
+     * 每个session的断线回调逻辑
+     */
+    void disconnect(Session session);
+
 
 }

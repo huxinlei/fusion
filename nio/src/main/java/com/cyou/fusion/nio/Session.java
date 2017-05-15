@@ -3,11 +3,15 @@
  */
 package com.cyou.fusion.nio;
 
+import com.cyou.fusion.nio.codec.Packet;
+import com.sun.xml.internal.bind.v2.runtime.reflect.Lister;
 import io.netty.channel.Channel;
 
 import java.util.Map;
+import java.util.Queue;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * The type Session.
@@ -18,7 +22,7 @@ public class Session {
      * 会话状态枚举
      */
     public enum STATUS {
-        ESTABLISHED, LOGGED, DELETABLE
+        ESTABLISHED, LOGGING,LOGGED, DELETABLE
     }
 
     /**
@@ -31,7 +35,10 @@ public class Session {
      */
     public static final String ATTR_OUTPUT = "OUTPUT";
 
-    public boolean connect = true;
+    /**
+     * 断线通知
+     */
+    boolean disconnect = false;
 
     /**
      * 套接字客户端
@@ -51,7 +58,7 @@ public class Session {
     /**
      * 会话属性
      */
-    private Map<String, Object> attributes = new ConcurrentHashMap<>();
+    private Map<String, Object> attributes;
 
     /**
      * 构造函数
@@ -59,9 +66,16 @@ public class Session {
      * @param channel 套接字客户端
      */
     Session(Channel channel) {
+
+        attributes = new ConcurrentHashMap<>();
+
         this.channel = channel;
         this.uuid = UUID.randomUUID();
         this.status = STATUS.ESTABLISHED;
+
+        // 输入和输出属性
+        setAttribute(ATTR_INPUT, new ConcurrentLinkedQueue<>());
+        setAttribute(ATTR_OUTPUT, new ConcurrentLinkedQueue<>());
     }
 
     /**
@@ -124,7 +138,7 @@ public class Session {
      *
      * @param status 会话状态
      */
-    void setStatus(STATUS status) {
+    public void setStatus(STATUS status) {
         this.status = status;
     }
 
@@ -137,10 +151,29 @@ public class Session {
         return channel;
     }
 
+    /**
+     * 获取会话ID
+     *
+     * @return 会话ID
+     */
+    public String id() {
+        return this.uuid.toString();
+    }
+
+    /**
+     * 发送消息
+     *
+     * @param packet 消息包
+     */
+    public void sendPacket(Packet packet) {
+        Queue<Packet> outputs = (Queue<Packet>) this.getAttribute(ATTR_OUTPUT);
+        outputs.add(packet);
+    }
+
     @Override
     public String toString() {
         return "Session{" +
-                "connect=" + connect +
+                "disconnect=" + disconnect +
                 ", channel=" + channel.remoteAddress() +
                 ", uuid=" + uuid +
                 ", status=" + status +

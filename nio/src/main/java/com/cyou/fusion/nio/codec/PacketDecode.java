@@ -34,7 +34,7 @@ public class PacketDecode extends ByteToMessageDecoder {
             int packetLength = byteBuf.readInt();
 
             if (packetID < 0 || packetLength <= 0) {
-                throw new IllegalStateException("AbstractPacket format invalid.");
+                throw new IllegalStateException("Packet format invalid.");
             }
 
             // 不够一个包体的长度,重置读索引,继续接收
@@ -43,18 +43,10 @@ public class PacketDecode extends ByteToMessageDecoder {
                 return;
             }
 
-            // 根据消息包ID生成消息包
-
-            AbstractPacket packet = PacketFactory.INSTANCE.newPacket(packetID);
-            if (packet == null) {
-                throw new IllegalStateException("Packet create error.");
-            }
-            packet.setPacketID(packetID);
-            packet.setPacketLength(packetLength);
-
+            // 创建消息包
             byte body[] = new byte[packetLength];
             byteBuf.readBytes(body);
-            packet.setBody(body);
+            Packet packet = new Packet(packetID,body);
 
             list.add(packet);
         }

@@ -1,3 +1,6 @@
+/*
+ * Copyright 2017 The Changyou Fusion Framework
+ */
 package com.cyou.fusion.core.evnet;
 
 import java.util.Queue;

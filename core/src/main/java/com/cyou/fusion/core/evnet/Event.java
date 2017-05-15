@@ -1,3 +1,6 @@
+/*
+ * Copyright 2017 The Changyou Fusion Framework
+ */
 package com.cyou.fusion.core.evnet;
 
 /**
@@ -20,7 +23,7 @@ public class Event implements Cloneable {
     /**
      * 回调源
      */
-    Thread src;
+    long src;
 
     /**
      * 消息ID
@@ -47,7 +50,7 @@ public class Event implements Cloneable {
     public Event(int what, Object data) {
         this.what = what;
         this.data = data;
-        src = Thread.currentThread();
+        src = Thread.currentThread().getId();
     }
 
     /**

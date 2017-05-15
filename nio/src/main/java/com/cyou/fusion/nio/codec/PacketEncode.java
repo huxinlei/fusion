@@ -12,10 +12,10 @@ import io.netty.handler.codec.MessageToByteEncoder;
  * <p>
  * Created by john on 2017/3/24.
  */
-public class PacketEncode extends MessageToByteEncoder<AbstractPacket> {
+public class PacketEncode extends MessageToByteEncoder<Packet> {
 
     @Override
-    protected void encode(ChannelHandlerContext channelHandlerContext, AbstractPacket msg, ByteBuf byteBuf) throws Exception {
+    protected void encode(ChannelHandlerContext channelHandlerContext, Packet msg, ByteBuf byteBuf) throws Exception {
 
         short packetID = msg.getPacketID();
         byte body[] = msg.getBody();

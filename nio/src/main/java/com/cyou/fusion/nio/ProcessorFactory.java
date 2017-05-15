@@ -12,7 +12,7 @@ package com.cyou.fusion.nio;
 public interface ProcessorFactory {
 
     /**
-     * 构建一段处理逻辑
+     * 构建处理逻辑
      *
      * @return 处理逻辑
      */

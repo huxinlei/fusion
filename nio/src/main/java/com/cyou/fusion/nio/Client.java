@@ -6,39 +6,32 @@ package com.cyou.fusion.nio;
 import com.cyou.fusion.nio.codec.Packet;
 import com.cyou.fusion.nio.codec.PacketDecode;
 import com.cyou.fusion.nio.codec.PacketEncode;
-import io.netty.bootstrap.ServerBootstrap;
+import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
-import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.logging.LogLevel;
-import io.netty.handler.logging.LoggingHandler;
+import io.netty.channel.socket.nio.NioSocketChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
-import java.util.Arrays;
 import java.util.Queue;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static com.cyou.fusion.nio.Session.ATTR_INPUT;
 
 /**
- * Netty的NIO套接字服务器类
+ * Netty的NIO套接字客户端类
  * <p>
  * Created by zhanglei_js on 2017/2/6.
  */
-public final class Server {
+public final class Client {
 
     /**
      * 日志打印
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(Server.class);
-
-    /**
-     * Netty处理线程组
-     */
-    private EventLoopGroup bossGroup;
+    private static final Logger LOGGER = LoggerFactory.getLogger(Client.class);
 
     /**
      * Netty处理线程组
@@ -46,29 +39,19 @@ public final class Server {
     private EventLoopGroup workerGroup;
 
     /**
-     * 线程选择器
-     */
-    private Selector selector;
-
-    /**
-     * 监听IP
+     * 连接IP
      */
     private String host;
 
     /**
-     * 监听端口
+     * 连接端口
      */
     private int port;
 
     /**
-     * 处理线程数
-     */
-    private int pool;
-
-    /**
      * 处理线程对象
      */
-    private Tick[] ticks;
+    private Tick tick;
 
     /**
      * 处理线程调度池
@@ -80,32 +63,16 @@ public final class Server {
      *
      * @param builder 构建器
      */
-    private Server(Builder builder) {
+    private Client(Builder builder) {
 
-        this.bossGroup = new NioEventLoopGroup(1);
-        this.workerGroup = new NioEventLoopGroup();
+        this.workerGroup = new NioEventLoopGroup(1);
 
         this.port = builder.port;
         this.host = builder.host;
-        this.pool = builder.pool;
 
         // 初始化处理线程
-        tickService = Executors.newFixedThreadPool(this.pool);
-        ticks = new Tick[this.pool];
-        for (int i = 0; i < this.pool; i++) {
-            ticks[i] = new Tick(builder.factory.newProcessor(), builder.handlers);
-        }
-
-        // 线程选择器
-        if (builder.selector == null) {
-            this.selector = (ticks, channel) -> {
-                // 默认根据端口选择
-                InetSocketAddress address = (InetSocketAddress) channel.remoteAddress();
-                return ticks[address.getPort() % pool];
-            };
-        } else {
-            this.selector = builder.selector;
-        }
+        tickService = Executors.newFixedThreadPool(1);
+        tick = new Tick(builder.processor, builder.handlers);
 
     }
 
@@ -121,15 +88,16 @@ public final class Server {
      */
     private void bootstrap() {
         try {
-            ServerBootstrap b = new ServerBootstrap();
-            b.group(bossGroup, workerGroup)
-                    .channel(NioServerSocketChannel.class)
+            Session session;
+
+            Bootstrap b = new Bootstrap();
+            b.group(workerGroup)
+                    .channel(NioSocketChannel.class)
                     .option(ChannelOption.SO_BACKLOG, 100)
                     .option(ChannelOption.TCP_NODELAY, true)
                     .option(ChannelOption.SO_KEEPALIVE, true)
-                    .childOption(ChannelOption.SO_KEEPALIVE, true)
-                    .handler(new LoggingHandler(LogLevel.INFO))
-                    .childHandler(new ChannelInitializer<SocketChannel>() {
+                    .handler(new ChannelInitializer<SocketChannel>() {
+
                         @Override
                         protected void initChannel(SocketChannel ch) throws Exception {
                             ChannelPipeline p = ch.pipeline();
@@ -143,7 +111,6 @@ public final class Server {
                                 public void channelActive(ChannelHandlerContext ctx) throws Exception {
                                     session = new Session(ctx.channel());
                                     // 将session交给某个线程访问处理
-                                    Tick tick = selector.select(ticks, ctx.channel());
                                     tick.putSession(ctx.channel(), session);
                                 }
 
@@ -157,13 +124,13 @@ public final class Server {
                                 @Override
                                 public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
                                     InetSocketAddress address = (InetSocketAddress) ctx.channel().remoteAddress();
-                                    LOGGER.error("客户端连接异常 {}", address);
+                                    LOGGER.error("服务器连接异常 {}", address);
                                 }
 
                                 @Override
                                 public void channelInactive(ChannelHandlerContext ctx) throws Exception {
                                     InetSocketAddress address = (InetSocketAddress) ctx.channel().remoteAddress();
-                                    LOGGER.info("客户端连接断开 {}", address);
+                                    LOGGER.info("服务器连接断开 {}", address);
 
                                     // 清理session引用，防止ChannelInboundHandler GC不掉，而导致内存溢出
                                     session = null;
@@ -172,12 +139,12 @@ public final class Server {
                         }
                     });
 
-            b.bind(host, port).sync().addListener((ChannelFutureListener) future -> {
+            b.connect(host, port).sync().addListener((ChannelFutureListener) future -> {
                 if (future.isSuccess()) {
-                    LOGGER.info("服务器启动正常");
-                    Arrays.stream(ticks).forEach(tick -> tickService.submit(tick));
+                    LOGGER.info("服务器连接正常");
+                    tickService.submit(tick);
                 } else {
-                    LOGGER.error("服务器启动异常", future.cause());
+                    LOGGER.error("服务器连接异常", future.cause());
                 }
             });
         } catch (Throwable throwable) {
@@ -189,7 +156,6 @@ public final class Server {
      * 关闭套接字服务器并停止逻辑处理线程
      */
     public void stop() {
-        bossGroup.shutdownGracefully();
         workerGroup.shutdownGracefully();
         tickService.shutdown();
     }
@@ -210,9 +176,9 @@ public final class Server {
         private int port = 8080;
 
         /**
-         * 处理逻辑线程数
+         * 处理逻辑
          */
-        private int pool = 1;
+        private Processor processor;
 
         /**
          * 消息包处理器
@@ -220,22 +186,12 @@ public final class Server {
         private PacketHandler[] handlers;
 
         /**
-         * 处理逻辑工厂
-         */
-        private ProcessorFactory factory;
-
-        /**
-         * 线程选择器
-         */
-        private Selector selector;
-
-        /**
          * 构造方法
          *
-         * @param factory 处理逻辑工厂
+         * @param processor 处理逻辑
          */
-        public Builder(ProcessorFactory factory) {
-            this.factory = factory;
+        public Builder(Processor processor) {
+            this.processor = processor;
         }
 
         /**
@@ -261,28 +217,6 @@ public final class Server {
         }
 
         /**
-         * 指定逻辑处理线程数
-         *
-         * @param pool 线程数
-         * @return 套接字服务器对象构建器
-         */
-        public Builder pool(int pool) {
-            this.pool = pool;
-            return this;
-        }
-
-        /**
-         * 线程选择器
-         *
-         * @param selector 线程选择器
-         * @return 套接字服务器对象构建器
-         */
-        public Builder selector(Selector selector) {
-            this.selector = selector;
-            return this;
-        }
-
-        /**
          * 注册消息包处理器
          *
          * @param handlers 消息包处理器
@@ -299,8 +233,8 @@ public final class Server {
          *
          * @return 套接字服务器对象
          */
-        public Server build() {
-            return new Server(this);
+        public Client build() {
+            return new Client(this);
         }
     }
 

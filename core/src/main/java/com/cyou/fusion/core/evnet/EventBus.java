@@ -1,3 +1,6 @@
+/*
+ * Copyright 2017 The Changyou Fusion Framework
+ */
 package com.cyou.fusion.core.evnet;
 
 import java.util.List;
@@ -62,7 +65,7 @@ public enum EventBus {
      * @param event    事件
      */
     public void callback(Runnable runnable, Event event) {
-        handlers.stream().filter(eventHandler -> eventHandler.getThreadId() == event.src.getId()).forEach(handler -> handler.post(runnable));
+        handlers.stream().filter(eventHandler -> eventHandler.getThreadId() == event.src).forEach(handler -> handler.post(runnable));
     }
 
 }

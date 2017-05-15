@@ -1,0 +1,10 @@
+option java_package = "com.cyou.fusion.example.protocol";
+option java_outer_classname = "Account";
+
+message P_ACCOUNT_LOGIN_REQ {
+    required string token = 1;
+}
+
+message P_ACCOUNT_LOGIN_RES {
+    required bool result = 1;
+}

@@ -1,3 +1,6 @@
 /.gradle/
 /.idea/
+/core/build/
 /nio/build/
+/example/build/
+

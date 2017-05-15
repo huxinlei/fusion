@@ -1,3 +1,6 @@
+/*
+ * Copyright 2017 The Changyou Fusion Framework
+ */
 package com.cyou.fusion.example.event;
 
 import com.cyou.fusion.core.evnet.Event;
@@ -10,7 +13,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 进程间通信
+ * 线程间通信
  * <p>
  * Created by zhanglei_js on 2017/5/12.
  */
@@ -31,12 +34,14 @@ public class App {
                 public void handleMessage(Event event) {
                     switch (event.getWhat()) {
                         case 1:
-                            System.out.println("已知事件:Thread(" + Thread.currentThread().getName() + "),Event(" + event + ")");
+                            System.out.println("已知事件[" + event.getWhat() + "]:Thread(" + Thread.currentThread().getName() + "),Event(" + event + ")");
                             // 回调
+                            String param = Thread.currentThread().getName();
                             EventBus.INSTANCE.callback(() -> System.out.println("回调:Thread(" + Thread.currentThread().getName() + "),Event(" + event + ")"), event);
                             break;
+                        case 3:
+                            System.out.println("已知事件[" + event.getWhat() + "]:Thread(" + Thread.currentThread().getName() + "),Event(" + event + ")");
                         default:
-                            System.out.println("未知事件:Thread(" + Thread.currentThread().getName() + "),Event(" + event + ")");
                             break;
                     }
                 }
@@ -61,12 +66,13 @@ public class App {
                 public void handleMessage(Event event) {
                     switch (event.getWhat()) {
                         case 2:
-                            System.out.println("已知事件:Thread(" + Thread.currentThread().getName() + "),Event(" + event + ")");
+                            System.out.println("已知事件[" + event.getWhat() + "]:Thread(" + Thread.currentThread().getName() + "),Event(" + event + ")");
                             // 回调
                             EventBus.INSTANCE.callback(() -> System.out.println("回调:Thread(" + Thread.currentThread().getName() + "),Event(" + event + ")"), event);
                             break;
+                        case 4:
+                            System.out.println("已知事件[" + event.getWhat() + "]:Thread(" + Thread.currentThread().getName() + "),Event(" + event + ")");
                         default:
-                            System.out.println("未知事件:Thread(" + Thread.currentThread().getName() + "),Event(" + event + ")");
                             break;
                     }
                 }
@@ -97,7 +103,7 @@ public class App {
             while (!Thread.interrupted()) {
                 EventLooper.execute();
 
-                // 模拟1秒以后发送消息
+                // 模拟1秒以后发送消息(仅发送1次)
                 try {
                     if (!notice) {
                         TimeUnit.SECONDS.sleep(1);

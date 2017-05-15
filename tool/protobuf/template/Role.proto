@@ -1,0 +1,15 @@
+option java_package = "com.cyou.fusion.example.protocol";
+option java_outer_classname = "Role";
+
+message P_ROLE_INFO_REQ {
+    required int32 id = 1;
+    required string name = 2;
+    required int32 level = 3;
+    repeated P_ITEM_INFO_REQ item = 4;
+}
+
+message P_ITEM_INFO_REQ {
+    required int32 id = 1;
+    required string name = 2;
+    required int32 num = 3;
+}

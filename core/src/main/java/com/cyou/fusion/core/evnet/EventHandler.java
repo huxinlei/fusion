@@ -1,3 +1,6 @@
+/*
+ * Copyright 2017 The Changyou Fusion Framework
+ */
 package com.cyou.fusion.core.evnet;
 
 import java.util.List;
@@ -24,7 +27,7 @@ public abstract class EventHandler {
     /**
      * 标记组
      */
-    List<Object> mTags;
+    private List<Object> mTags;
 
     /**
      * 构造函数
