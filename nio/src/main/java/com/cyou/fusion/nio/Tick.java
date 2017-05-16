@@ -64,7 +64,7 @@ public class Tick implements Runnable {
     public void run() {
 
         // 初始化回调
-        processor.prepare();
+        processor.prepare(this);
 
         // Tick处理
         while (!Thread.interrupted()) {
@@ -96,7 +96,7 @@ public class Tick implements Runnable {
                 }
 
                 // 每个session的tick逻辑
-                processor.tick(session);
+                processor.tick(this, session);
 
                 // 处理输出
                 Queue<Packet> outputs = (Queue<Packet>) session.getAttribute(ATTR_OUTPUT);
@@ -112,17 +112,17 @@ public class Tick implements Runnable {
                 // 处理断线
                 if (!session.isActive() && !session.disconnect) {
                     // 回调断线处理(仅一次，仅被动断线通知，主动关闭不通知)
-                    processor.disconnect(session);
+                    processor.disconnect(this, session);
                     session.disconnect = true;
                 }
             });
 
             // 自定义tick逻辑处理
-            processor.tick();
+            processor.tick(this);
         }
 
         // 结束回调
-        processor.terminate();
+        processor.terminate(this);
 
     }
 

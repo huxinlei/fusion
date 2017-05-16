@@ -156,8 +156,7 @@ public final class Server {
 
                                 @Override
                                 public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-                                    InetSocketAddress address = (InetSocketAddress) ctx.channel().remoteAddress();
-                                    LOGGER.error("客户端连接异常 {}", address);
+                                    LOGGER.error("客户端连接异常", cause);
                                 }
 
                                 @Override

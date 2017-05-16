@@ -34,6 +34,16 @@ public enum EventBus {
     }
 
     /**
+     * 获取指定线程的处理器
+     *
+     * @param threadID 线程ID
+     * @return 处理器
+     */
+    public EventHandler getHandler(long threadID) {
+        return handlers.stream().filter(eventHandler -> eventHandler.getThreadId() == threadID).findAny().orElse(null);
+    }
+
+    /**
      * 广播事件给所有线程
      *
      * @param event 事件

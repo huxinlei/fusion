@@ -1,0 +1,13 @@
+option java_package = "com.cyou.fusion.example.protocol";
+option java_outer_classname = "Chart";
+
+message P_CHART_SEND_REQ {
+    required string message = 1;
+    required bool private = 2;
+    optional string name = 3;
+}
+
+message P_CHART_RECEIVE_NOTICE {
+    required string name = 1;
+    required string message = 2;
+}

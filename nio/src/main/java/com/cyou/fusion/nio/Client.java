@@ -93,7 +93,6 @@ public final class Client {
             Bootstrap b = new Bootstrap();
             b.group(workerGroup)
                     .channel(NioSocketChannel.class)
-                    .option(ChannelOption.SO_BACKLOG, 100)
                     .option(ChannelOption.TCP_NODELAY, true)
                     .option(ChannelOption.SO_KEEPALIVE, true)
                     .handler(new ChannelInitializer<SocketChannel>() {
@@ -123,8 +122,7 @@ public final class Client {
 
                                 @Override
                                 public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-                                    InetSocketAddress address = (InetSocketAddress) ctx.channel().remoteAddress();
-                                    LOGGER.error("服务器连接异常 {}", address);
+                                    LOGGER.error("服务器连接异常", cause);
                                 }
 
                                 @Override

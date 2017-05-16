@@ -47,7 +47,7 @@ public final class Role {
     /**
      * <code>repeated .P_ITEM_INFO_REQ item = 4;</code>
      */
-    java.util.List<com.cyou.fusion.example.protocol.Role.P_ITEM_INFO_REQ> 
+    java.util.List<com.cyou.fusion.example.protocol.Role.P_ITEM_INFO_REQ>
         getItemList();
     /**
      * <code>repeated .P_ITEM_INFO_REQ item = 4;</code>
@@ -60,7 +60,7 @@ public final class Role {
     /**
      * <code>repeated .P_ITEM_INFO_REQ item = 4;</code>
      */
-    java.util.List<? extends com.cyou.fusion.example.protocol.Role.P_ITEM_INFO_REQOrBuilder> 
+    java.util.List<? extends com.cyou.fusion.example.protocol.Role.P_ITEM_INFO_REQOrBuilder>
         getItemOrBuilderList();
     /**
      * <code>repeated .P_ITEM_INFO_REQ item = 4;</code>
@@ -270,7 +270,7 @@ public final class Role {
     /**
      * <code>repeated .P_ITEM_INFO_REQ item = 4;</code>
      */
-    public java.util.List<? extends com.cyou.fusion.example.protocol.Role.P_ITEM_INFO_REQOrBuilder> 
+    public java.util.List<? extends com.cyou.fusion.example.protocol.Role.P_ITEM_INFO_REQOrBuilder>
         getItemOrBuilderList() {
       return item_;
     }
@@ -980,7 +980,7 @@ public final class Role {
       /**
        * <code>repeated .P_ITEM_INFO_REQ item = 4;</code>
        */
-      public java.util.List<? extends com.cyou.fusion.example.protocol.Role.P_ITEM_INFO_REQOrBuilder> 
+      public java.util.List<? extends com.cyou.fusion.example.protocol.Role.P_ITEM_INFO_REQOrBuilder>
            getItemOrBuilderList() {
         if (itemBuilder_ != null) {
           return itemBuilder_.getMessageOrBuilderList();
@@ -1006,12 +1006,12 @@ public final class Role {
       /**
        * <code>repeated .P_ITEM_INFO_REQ item = 4;</code>
        */
-      public java.util.List<com.cyou.fusion.example.protocol.Role.P_ITEM_INFO_REQ.Builder> 
+      public java.util.List<com.cyou.fusion.example.protocol.Role.P_ITEM_INFO_REQ.Builder>
            getItemBuilderList() {
         return getItemFieldBuilder().getBuilderList();
       }
       private com.google.protobuf.RepeatedFieldBuilder<
-          com.cyou.fusion.example.protocol.Role.P_ITEM_INFO_REQ, com.cyou.fusion.example.protocol.Role.P_ITEM_INFO_REQ.Builder, com.cyou.fusion.example.protocol.Role.P_ITEM_INFO_REQOrBuilder> 
+          com.cyou.fusion.example.protocol.Role.P_ITEM_INFO_REQ, com.cyou.fusion.example.protocol.Role.P_ITEM_INFO_REQ.Builder, com.cyou.fusion.example.protocol.Role.P_ITEM_INFO_REQOrBuilder>
           getItemFieldBuilder() {
         if (itemBuilder_ == null) {
           itemBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
