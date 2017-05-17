@@ -4,7 +4,6 @@
 package com.cyou.fusion.nio;
 
 import com.cyou.fusion.nio.codec.Packet;
-import com.sun.xml.internal.bind.v2.runtime.reflect.Lister;
 import io.netty.channel.Channel;
 
 import java.util.Map;
