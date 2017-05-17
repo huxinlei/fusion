@@ -1,0 +1,4 @@
+task protobuf(type:Exec)  {
+    workingDir './protobuf'
+    commandLine 'cmd',"/c","run.cmd"
+}
