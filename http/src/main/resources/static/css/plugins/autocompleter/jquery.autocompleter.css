@@ -1,0 +1,72 @@
+/*
+ * Autocompleter v0.1.4 - 2014-06-16
+ * Simple, easy, customisable and with cache support.
+ * http://github.com/ArtemFitiskin/jquery-autocompleter
+ *
+ * Copyright 2014 Artem Fitiskin; MIT Licensed
+ */
+
+/**
+ * Simplecomplete
+ */
+.autocompleter {
+	width: 300px; 
+	background: #dddddd;
+	position: absolute;
+	top: 34px;
+	z-index: 100;
+}
+.autocompleter, .autocompleter-hint {
+	position: absolute;
+}
+.autocompleter-list {
+	box-shadow: inset 0px 0px 6px rgba(0,0,0,0.1);
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	text-align: left;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+	margin:0px !important;
+	padding:0px !important;
+}
+.autocompleter-item-selected {
+	background: #ffffff;
+}
+.autocompleter-item {
+	padding: 6px 6px;
+	color: #444444;
+	font-size: 100%;
+	cursor: pointer;
+}
+.autocompleter-item:hover {
+	background: #dbed8a;
+}
+.autocompleter-item strong {
+	/*background: #f9de8f;*/
+	text-shadow: 0 1px 0 #ffffff;
+}
+.autocompleter-item span {
+	color: #14bbf2;
+}
+.autocompleter-hint {
+	color: #ccc;
+	height: 34px;
+	text-align: left;
+	top: -34px;
+	font-weight: 400;
+	left: 0;
+	width: 100%;
+	padding: 5px;
+	font-size: 100%;
+	display: none;
+}
+.autocompleter-hint span {
+	color: transparent;
+}
+.autocompleter-hint-show {
+	display: block;
+}
+.autocompleter-closed {
+	display: none;
+}

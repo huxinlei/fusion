@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="zh-CN"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Fusion CMS Common</title>
+
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <link rel="icon" href="/static/image/favicon.ico" type="image/x-icon"/>
+    <link rel="shortcut icon" href="/static/image/favicon.ico" type="image/x-icon"/>
+
+</head>
+<body class="gray-bg">
+<div class="container">
+    <img src="http://i0.cy.com/source/img/home/logo.png"/>
+</div>
+
+<div class="container-fluid  center-container" style="margin-bottom:70px;">
+    <div th:include="this::content"></div>
+</div>
+
+<div class="navbar navbar-default navbar-fixed-bottom" role="navigation">
+    <div class="container text-center login-bottom">
+        Copyright © 2010 ChangYou.com Limited. All rights reserved.
+    </div>
+</div>
+</body>
+</html>

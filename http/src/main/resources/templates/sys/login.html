@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="/common">
+<head>
+    <title>Fusion CMS Login</title>
+
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="/static/css/font-awesome.min.css" rel="stylesheet"/>
+    <link href="/static/css/animate.min.css" rel="stylesheet"/>
+    <link href="/static/css/style.min.css" rel="stylesheet"/>
+    <link href="/static/css/plugins/sweetalert/sweetalert.css" rel="stylesheet"/>
+
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
+    <script src="/static/js/game.js"></script>
+    <script src="/static/js/plugins/sweetalert/sweetalert.min.js"></script>
+
+</head>
+<body>
+<div th:fragment="content" th:remove="tag">
+    <div class="middle-box text-center animated fadeInDown">
+        <div class="alert alert-danger alert-dismissable" th:unless="${#strings.isEmpty(error)}">
+            <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+            <!--/*@thymesVar id="error" type="java.lang.String"*/-->
+            <span th:text="${error}"></span>
+        </div>
+        <div>
+            <img src="/static/image/logo.png"/>
+            <h2 class="">后台管理系统</h2>
+            <form class="m-t" action="/doLogin" method="post">
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="邮箱" name="email" id="email"/>
+                </div>
+                <div class="form-group">
+                    <input type="password" class="form-control" placeholder="密码" name="password"/>
+                </div>
+                <button type="submit" class="btn btn-primary block full-width m-b">登陆</button>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+<script type="text/javascript">
+
+</script>
+</html>
