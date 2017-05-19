@@ -74,8 +74,33 @@ public enum EventBus {
      * @param runnable 回调
      * @param event    事件
      */
+    @Deprecated
     public void callback(Runnable runnable, Event event) {
         handlers.stream().filter(eventHandler -> eventHandler.getThreadId() == event.src).forEach(handler -> handler.post(runnable));
     }
 
+    /**
+     * 回调给事件产生线程(成功)
+     *
+     * @param o     回调参数对象
+     * @param event 事件
+     * @param <T>   泛型
+     */
+    public <T> void onSuccess(T o, Event<T> event) {
+        if (event.eventCallback != null) {
+            handlers.stream().filter(eventHandler -> eventHandler.getThreadId() == event.src).forEach(handler -> handler.post(() -> event.eventCallback.onSuccess(o)));
+        }
+    }
+
+    /**
+     * 回调给事件产生线程(失败)
+     *
+     * @param throwable 异常
+     * @param event     事件
+     */
+    public void onFailure(Throwable throwable, Event event) {
+        if (event.eventCallback != null) {
+            handlers.stream().filter(eventHandler -> eventHandler.getThreadId() == event.src).forEach(handler -> handler.post(() -> event.eventCallback.onFailure(throwable)));
+        }
+    }
 }

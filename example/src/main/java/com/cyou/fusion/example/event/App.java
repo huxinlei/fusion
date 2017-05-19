@@ -3,10 +3,9 @@
  */
 package com.cyou.fusion.example.event;
 
-import com.cyou.fusion.core.evnet.Event;
-import com.cyou.fusion.core.evnet.EventBus;
-import com.cyou.fusion.core.evnet.EventHandler;
-import com.cyou.fusion.core.evnet.EventLooper;
+import com.cyou.fusion.core.evnet.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -18,6 +17,11 @@ import java.util.concurrent.TimeUnit;
  * Created by zhanglei_js on 2017/5/12.
  */
 public class App {
+
+    /**
+     * 日志打印
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(App.class);
 
     /**
      * 入口
@@ -33,14 +37,18 @@ public class App {
                 @Override
                 public void handleMessage(Event event) {
                     switch (event.getWhat()) {
-                        case 1:
-                            System.out.println("已知事件[" + event.getWhat() + "]:Thread(" + Thread.currentThread().getName() + "),Event(" + event + ")");
+                        case 0:
+                            LOGGER.info("Google: 处理事件[" + event.getWhat() + "],Event(" + event + ")");
                             // 回调
-                            String param = Thread.currentThread().getName();
-                            EventBus.INSTANCE.callback(() -> System.out.println("回调:Thread(" + Thread.currentThread().getName() + "),Event(" + event + ")"), event);
+                            EventBus.INSTANCE.onSuccess("OK", event);
+                            break;
+                        case 1:
+                            LOGGER.info("Google: 处理事件[" + event.getWhat() + "],Event(" + event + ")");
+                            // 回调
+                            EventBus.INSTANCE.onSuccess("OK", event);
                             break;
                         case 3:
-                            System.out.println("已知事件[" + event.getWhat() + "]:Thread(" + Thread.currentThread().getName() + "),Event(" + event + ")");
+                            LOGGER.info("Google: 未知事件[" + event.getWhat() + "],Event(" + event + ")");
                         default:
                             break;
                     }
@@ -65,13 +73,18 @@ public class App {
                 @Override
                 public void handleMessage(Event event) {
                     switch (event.getWhat()) {
-                        case 2:
-                            System.out.println("已知事件[" + event.getWhat() + "]:Thread(" + Thread.currentThread().getName() + "),Event(" + event + ")");
+                        case 0:
+                            LOGGER.info("Microsoft: 处理事件[" + event.getWhat() + "],Event(" + event + ")");
                             // 回调
-                            EventBus.INSTANCE.callback(() -> System.out.println("回调:Thread(" + Thread.currentThread().getName() + "),Event(" + event + ")"), event);
+                            EventBus.INSTANCE.onSuccess("OK", event);
+                            break;
+                        case 2:
+                            LOGGER.info("Microsoft: 处理事件[" + event.getWhat() + "],Event(" + event + ")");
+                            // 回调
+                            EventBus.INSTANCE.onFailure(new IllegalArgumentException("ERROR"), event);
                             break;
                         case 4:
-                            System.out.println("已知事件[" + event.getWhat() + "]:Thread(" + Thread.currentThread().getName() + "),Event(" + event + ")");
+                            LOGGER.info("microsoft: 未知事件[" + event.getWhat() + "],Event(" + event + ")");
                         default:
                             break;
                     }
@@ -107,10 +120,42 @@ public class App {
                 try {
                     if (!notice) {
                         TimeUnit.SECONDS.sleep(1);
-                        Event e1 = new Event(1, "E1");
-                        Event e2 = new Event(2, "E2");
+                        Event<String> e0 = new Event<>(0, "E0", new EventCallback<String>() {
+                            @Override
+                            public void onSuccess(String message) {
+                                LOGGER.info("E0回调 :onSuccess(" + message + ")");
+                            }
+
+                            @Override
+                            public void onFailure(Throwable ex) {
+                                LOGGER.info("E0回调 :onFailure(" + ex.getMessage() + ")");
+                            }
+                        });
+                        Event<String> e1 = new Event<>(1, "E1", new EventCallback<String>() {
+                            @Override
+                            public void onSuccess(String message) {
+                                LOGGER.info("E1回调 :onSuccess(" + message + ")");
+                            }
+
+                            @Override
+                            public void onFailure(Throwable ex) {
+                                LOGGER.info("E1回调 :onFailure(" + ex.getMessage() + ")");
+                            }
+                        });
+                        Event<String> e2 = new Event<>(2, "E2", new EventCallback<String>() {
+                            @Override
+                            public void onSuccess(String message) {
+                                LOGGER.info("E2回调 :onSuccess(" + message + ")");
+                            }
+
+                            @Override
+                            public void onFailure(Throwable ex) {
+                                LOGGER.info("E2回调 :onFailure(" + ex.getMessage() + ")");
+                            }
+                        });
                         Event e3 = new Event(3, "E3");
                         Event e4 = new Event(4, "E4");
+                        EventBus.INSTANCE.broadcast(e0);
                         EventBus.INSTANCE.broadcast(e1);
                         EventBus.INSTANCE.broadcast(e2);
                         EventBus.INSTANCE.broadcast(e3, eventHandler -> {
@@ -128,10 +173,9 @@ public class App {
                 }
             }
             System.out.println("结束运行.");
-
         };
 
-        ExecutorService executorService = Executors.newFixedThreadPool(3, r -> new Thread(r, r.hashCode() + "@Corporation"));
+        ExecutorService executorService = Executors.newFixedThreadPool(3);
         executorService.submit(google);
         executorService.submit(microsoft);
         executorService.submit(apple);
